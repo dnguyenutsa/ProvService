@@ -17,7 +17,7 @@
 #    under the License.
 
 """
-Routines for configuring Provenance
+Routines for configuring Sios
 """
 
 import logging

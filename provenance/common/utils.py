@@ -49,7 +49,7 @@ LOG = logging.getLogger(__name__)
 
 FEATURE_BLACKLIST = ['content-length', 'content-type', 'x-image-meta-size']
 
-PROVENANCE_TEST_SOCKET_FD_STR = 'PROVENANCE_TEST_SOCKET_FD'
+SIOS_TEST_SOCKET_FD_STR = 'SIOS_TEST_SOCKET_FD'
 
 
 def chunkreadable(iter, chunk_size=65536):
@@ -447,7 +447,7 @@ class LazyPluggable(object):
                 backend_name = CONF[self.__config_group][self.__pivot]
             if backend_name not in self.__backends:
                 msg = _('Invalid backend: %s') % backend_name
-                raise exception.ProvenanceException(msg)
+                raise exception.SiosException(msg)
 
             backend = self.__backends[backend_name]
             if isinstance(backend, tuple):
@@ -499,13 +499,13 @@ def validate_key_cert(key_file, cert_file):
 
 
 def get_test_suite_socket():
-    global PROVENANCE_TEST_SOCKET_FD_STR
-    if PROVENANCE_TEST_SOCKET_FD_STR in os.environ:
-        fd = int(os.environ[PROVENANCE_TEST_SOCKET_FD_STR])
+    global SIOS_TEST_SOCKET_FD_STR
+    if SIOS_TEST_SOCKET_FD_STR in os.environ:
+        fd = int(os.environ[SIOS_TEST_SOCKET_FD_STR])
         sock = socket.fromfd(fd, socket.AF_INET, socket.SOCK_STREAM)
         sock = socket.SocketType(_sock=sock)
         sock.listen(CONF.backlog)
-        del os.environ[PROVENANCE_TEST_SOCKET_FD_STR]
+        del os.environ[SIOS_TEST_SOCKET_FD_STR]
         os.close(fd)
         return sock
     return None

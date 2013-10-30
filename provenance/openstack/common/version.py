@@ -26,7 +26,7 @@ class VersionInfo(object):
     def __init__(self, package):
         """Object that understands versioning for a package
         :param package: name of the python package, such as provenance, or
-                        python-provenanceclient
+                        python-siosclient
         """
         self.package = package
         self.release = None

@@ -15,3 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+SUPPORTED_FILTERS = ['name', 'status', 'container_format', 'disk_format',
+                     'min_ram', 'min_disk', 'size_min', 'size_max',
+                     'is_public', 'changes-since', 'protected']
+
+SUPPORTED_PARAMS = ('X-Roles', 'marker', 'sort_key', 'sort_dir')

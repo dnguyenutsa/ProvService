@@ -15,7 +15,7 @@
 #    under the License.
 
 """
-/Provenance endpoint for Provenance v1 API
+/PDP endpoint for Sios v1 API
 """
 
 import copy
@@ -45,9 +45,9 @@ LOG = logging.getLogger(__name__)
 
 class Controller(object):
     """
-    WSGI controller for Policy Decision Point in Provenance v1 API
+    WSGI controller for Policy Decision Point in Sios v1 API
 
-    The Provenance resource API is a RESTful web service for Provenance Service. The API
+    The PDP resource API is a RESTful web service for Policy Decisions. The API
     is as follows::
 
         POST /check -- check the Policy Decision
@@ -60,15 +60,15 @@ class Controller(object):
         self.pool = eventlet.GreenPool(size=1024)
    
     """
-    Provenance for glance OpenStack Service
+    PDP for glance OpenStack Service
     """
     def enforce_glance(self, req):
         """Authorize an action against our policies"""
         try:
 	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            provenance_decision = self.policy_glance.enforce(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, provenance_decision))
-   	    return provenance_decision
+            pdp_decision = self.policy_glance.enforce(req.context, req.context.action, req.context.target)
+	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+   	    return pdp_decision
         except:
 	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
 	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
@@ -78,24 +78,24 @@ class Controller(object):
         """Authorize an action against our policies"""
         try:
 	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            provenance_decision = self.policy_glance.check(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, provenance_decision))
-   	    return provenance_decision
+            pdp_decision = self.policy_glance.check(req.context, req.context.action, req.context.target)
+	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+   	    return pdp_decision
         except exception:
 	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
 	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
             return False
 
     """
-    Provenance for nova OpenStack Service
+    PDP for nova OpenStack Service
     """
     def enforce_nova(self, req):
         """Authorize an action against our policies"""
         try:
 	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            provenance_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, provenance_decision))
-	    return provenance_decision
+            pdp_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
+	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+	    return pdp_decision
         except:
 	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
 	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)

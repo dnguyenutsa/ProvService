@@ -15,20 +15,28 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from provenance.api.v1 import provenance
+from provenance.api.v1 import rdf
 from provenance.common import wsgi
 
 
 class API(wsgi.Router):
 
-    """WSGI router for PROVENANCE v1 API requests."""
+    """WSGI router for SIOS v1 API requests."""
 
     def __init__(self, mapper):
 
-        provenance_resource = provenance.create_resource()
-        mapper.connect('/provenance/store_raw_prov_data',
-                       controller=provenance_resource,
+        pdp_resource = rdf.create_resource()
+        mapper.connect('/pdp/check_glance',
+                       controller=pdp_resource,
                        action='check_glance',
+                       conditions={'method': ['POST']})
+        mapper.connect('/pdp/enforce_glance',
+                       controller=pdp_resource,
+                       action='enforce_glance',
+                       conditions={'method': ['POST']})
+        mapper.connect('/pdp/enforce_nova',
+                       controller=pdp_resource,
+                       action='enforce_nova',
                        conditions={'method': ['POST']})
 
         super(API, self).__init__(mapper)
