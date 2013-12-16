@@ -30,14 +30,14 @@ from webob.exc import (HTTPError,
                        HTTPInternalServerError,
                        HTTPServiceUnavailable)
 from webob import Response
-from provenance.policy.glance import glance
-from provenance.policy.nova import nova
 import provenance.api.v1
 from provenance.common import exception
 from provenance.common import utils
 from provenance.common import wsgi
 from provenance.openstack.common import strutils
 import provenance.openstack.common.log as logging
+
+import rdflib
 
 CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
@@ -55,41 +55,12 @@ class Controller(object):
     """
 
     def __init__(self):
-        self.policy_glance = glance.Enforcer()
-        self.policy_nova = nova
         self.pool = eventlet.GreenPool(size=1024)
-   
-    """
-    PDP for glance OpenStack Service
-    """
-    def enforce_glance(self, req):
-        """Authorize an action against our policies"""
-        try:
-	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            pdp_decision = self.policy_glance.enforce(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
-   	    return pdp_decision
-        except:
-	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
-	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
-            return False
-
-    def check_glance(self, req):
-        """Authorize an action against our policies"""
-        try:
-	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            pdp_decision = self.policy_glance.check(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
-   	    return pdp_decision
-        except exception:
-	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
-	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
-            return False
 
     """
-    PDP for nova OpenStack Service
+    Performs query evaluation
     """
-    def enforce_nova(self, req):
+    def enforce_provquery(self, req):
         """Authorize an action against our policies"""
         try:
 	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
@@ -100,6 +71,14 @@ class Controller(object):
 	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
 	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
             return False
+
+class ProvenanceDataManager(object):
+    
+    def __init__(self):
+        self.prov_graph = rdflib.Graph()
+        self.prov_graph.parse("https://raw.github.com/dnguyenutsa/Prov-EAC/master/hws1.rdf", format="rdfa")
+        for s, p, o in prov_graph:
+	        LOG.debug(_('The Policy decision for action [%s] is [%s] and [%s]') % (s, p, o))
 
 class Deserializer(wsgi.JSONRequestDeserializer):
     """Handles deserialization of specific controller method requests."""

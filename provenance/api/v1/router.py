@@ -39,4 +39,9 @@ class API(wsgi.Router):
                        action='enforce_nova',
                        conditions={'method': ['POST']})
 
+        mapper.connect('/pdp/enforce_provquery',
+                       controller=pdp_resource,
+                       action='enforce_provquery',
+                       conditions={'method': ['POST']})
+
         super(API, self).__init__(mapper)
