@@ -56,6 +56,7 @@ class Controller(object):
 
     def __init__(self):
         self.pool = eventlet.GreenPool(size=1024)
+        self.provdata_manager = ProvenanceDataManager()
 
     """
     Performs query evaluation
@@ -64,8 +65,9 @@ class Controller(object):
         """Authorize an action against our policies"""
         try:
 	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            pdp_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
-	    LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+            #pdp_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
+            prov_qresult = self.provdata_manager.process_provquery(req)
+        LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
 	    return pdp_decision
         except:
 	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
@@ -80,6 +82,10 @@ class ProvenanceDataManager(object):
         for s, p, o in prov_graph:
 	        LOG.debug(_('The Policy decision for action [%s] is [%s] and [%s]') % (s, p, o))
 
+    def process_provquery(self, req):
+        
+        return None
+            
 class Deserializer(wsgi.JSONRequestDeserializer):
     """Handles deserialization of specific controller method requests."""
 
