@@ -64,26 +64,47 @@ class Controller(object):
     def enforce_provquery(self, req):
         """Authorize an action against our policies"""
         try:
-	    LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
-            #pdp_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
-            prov_qresult = self.provdata_manager.process_provquery(req)
-        LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
-	    return pdp_decision
+	        #LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
+            pdp_decision =  self.policy_nova.enforce(req.context, req.context.action, req.context.target)
+            self.provdata_manager.process_provquery(req)
+            #prov_qresult = self.provdata_manager.process_provquery(req)
+            #LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+            prov_qresult = ""
+            return prov_qresult
         except:
-	    LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
-	    LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
+	        #LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
+	        #LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
             return False
+
+
+
+def enforce_glance(self, req):
+    """Authorize an action against our policies"""
+    try:
+        LOG.debug(_('Evaluating Policy decision for action [%s]') % req.context.action)
+        pdp_decision = self.policy_glance.enforce(req.context, req.context.action, req.context.target)
+        LOG.debug(_('The Policy decision for action [%s] is [%s]') % (req.context.action, pdp_decision))
+        return pdp_decision
+    except:
+        LOG.debug(_('Exception Raised for action [%s]') % req.context.action)
+        LOG.debug(_('The Policy decision for action [%s] is [False]') % req.context.action)
+        return False
+
+
 
 class ProvenanceDataManager(object):
     
     def __init__(self):
         self.prov_graph = rdflib.Graph()
-        self.prov_graph.parse("https://raw.github.com/dnguyenutsa/Prov-EAC/master/hws1.rdf", format="rdfa")
-        for s, p, o in prov_graph:
-	        LOG.debug(_('The Policy decision for action [%s] is [%s] and [%s]') % (s, p, o))
+        self.prov_graph.parse("hws1.rdf")
+#        self.prov_graph.parse("https://raw.github.com/dnguyenutsa/Prov-EAC/master/hws1.rdf", format="rdfa")
+#        for s, p, o in prov_graph:
+#	        LOG.debug(_('The Policy decision for action [%s] is [%s] and [%s]') % (s, p, o))
 
     def process_provquery(self, req):
-        
+        for s, p, o in prov_graph:
+	        LOG.debug(_('The Policy decision for action [%s] is [%s] and [%s]') % (s, p, o))
+                
         return None
             
 class Deserializer(wsgi.JSONRequestDeserializer):

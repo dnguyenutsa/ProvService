@@ -30,7 +30,7 @@ class API(wsgi.Router):
                        controller=pdp_resource,
                        action='check_glance',
                        conditions={'method': ['POST']})
-        mapper.connect('/pdp/enforce_glance',
+        mapper.connect('/rdf/enforce_glance',
                        controller=pdp_resource,
                        action='enforce_glance',
                        conditions={'method': ['POST']})
@@ -39,7 +39,7 @@ class API(wsgi.Router):
                        action='enforce_nova',
                        conditions={'method': ['POST']})
 
-        mapper.connect('/pdp/enforce_provquery',
+        mapper.connect('/rdf/enforce_provquery',
                        controller=pdp_resource,
                        action='enforce_provquery',
                        conditions={'method': ['POST']})
